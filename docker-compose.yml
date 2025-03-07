@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: planos_internacionais
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: nest_api
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "postgresql://user:password@db:5432/planos_internacionais?schema=public"
+      JWT_SECRET: "sua-chave-secreta"
+      STRIPE_SECRET_KEY: "sua-chave-de-teste-stripe"
+    ports:
+      - "3000:3000"
+    command: ["/bin/sh", "-c", "npx prisma migrate deploy && npm run start"]
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+volumes:
+  pgdata:
