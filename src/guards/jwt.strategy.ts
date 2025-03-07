@@ -18,7 +18,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   // Se o token for válido, este método é chamado e podemos retornar
   // dados do payload para ficar disponível em req.user
   async validate(payload: any) {
-    // O payload normalmente é algo que você definiu no momento de assinar, ex:
     // { sub: user.id, email: user.email, role: user.role }
     return { 
       userId: payload.sub, 

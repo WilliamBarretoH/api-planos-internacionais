@@ -21,7 +21,7 @@ export class AuthService {
         // Cria usuário
         const user = await this.userService.createUser(dto.email, dto.password, dto.name);
         const payload = { sub: user.id, email: user.email }
-        // Retorna algo simples ou gera token direto
+        // Retorna token gerado e email
         const data = {
             user: user.email,
             token: this.jwtService.sign(payload)
@@ -29,7 +29,6 @@ export class AuthService {
         return { message: 'User created successfully', data };
     }
 
-    // Exemplo de login
     async login(loginDto: LoginDto) {
         const user = await this.userService.findByEmail(loginDto.email);
         if (!user) throw new BadRequestException('Invalid credentials');
@@ -37,7 +36,6 @@ export class AuthService {
         const isMatch = await bcrypt.compare(loginDto.password, user.password);
         if (!isMatch) throw new BadRequestException('Invalid credentials');
 
-        // IMPORTANTE: Adicionar role no payload
         const payload = { sub: user.id, email: user.email, role: user.role };
 
         const token = this.jwtService.sign(payload);
