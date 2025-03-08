@@ -7,6 +7,8 @@ import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 export class StripeController {
   constructor(private readonly stripeService: StripeService) {}
 
+  //acredito que nao consegui concluir com exito essa parte de criar o pagamento pois
+  //nao identifiquei a maneira correta de fazer para tranferencia bancaria
   @Post()
   async createPaymentIntent(@Body() body: { amount: number; currency: string }) {
     const { amount, currency } = body;

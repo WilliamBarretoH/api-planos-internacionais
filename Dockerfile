@@ -23,4 +23,4 @@ RUN npx prisma generate
 EXPOSE 3000
 
 # Comando para rodar a aplicação
-CMD ["sh", "-c", "npx prisma migrate deploy && npm run start"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npx prisma db seed && npm run start"]

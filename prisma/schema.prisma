@@ -10,40 +10,40 @@ datasource db {
 // ================ MODELS =====================
 
 model User {
-  id             Int             @id @default(autoincrement())
-  email          String          @unique
-  password       String
-  name           String?
-  role           String          @default("user")
-  
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  password String
+  name     String?
+  role     String  @default("user")
+
   // Relacionamento: um User pode ter várias Subscriptions
-  subscriptions  Subscription[]
+  subscriptions Subscription[]
 }
 
 model Plan {
-  id             Int             @id @default(autoincrement())
-  name           String
-  description    String?
-  price          Float
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  price       Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   // Relacionamento: um Plan pode ser escolhido em várias Subscriptions
-  subscriptions  Subscription[]
+  subscriptions Subscription[]
 }
 
 model Subscription {
-  id             Int       @id @default(autoincrement())
-  status         String    @default("ACTIVE")
-  
+  id     Int    @id @default(autoincrement())
+  status String @default("ACTIVE")
+
   // Campos de referência
-  userId         Int
-  planId         Int
+  userId Int
+  planId Int
 
   // Relações
-  user           User      @relation(fields: [userId], references: [id])
-  plan           Plan      @relation(fields: [planId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+  plan Plan @relation(fields: [planId], references: [id])
 
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
