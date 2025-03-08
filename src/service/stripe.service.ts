@@ -24,73 +24,29 @@ export class StripeService {
       const paymentIntent = await this.stripe.paymentIntents.create({
         amount,
         currency,
+        capture_method: 'manual',
+        automatic_payment_methods: { enabled: true }
       });
       this.logger.log(
         `PaymentIntent created successfully with amount: ${amount} ${currency}`,
       );
       return paymentIntent;
     } catch (error) {
-      this.logger.error('Failed to create PaymentIntent', error.stack);
+      this.logger.error('Failed to create PaymentIntent', error.message);
       throw error;
     }
   }
 
-  // Customer Management (Create Customer)
-  async createCustomer(email: string, name: string): Promise<Stripe.Customer> {
+  async capturePaymentIntent(paymentIntentId: string): Promise<Stripe.PaymentIntent> {
     try {
-      const customer = await this.stripe.customers.create({ email, name });
-      this.logger.log(`Customer created successfully with email: ${email}`);
-      return customer;
+      const paymentIntent = await this.stripe.paymentIntents.capture(paymentIntentId);
+  
+      this.logger.log(`PaymentIntent ${paymentIntentId} captured successfully`);
+      return paymentIntent;
     } catch (error) {
-      this.logger.error('Failed to create customer', error.stack);
+      this.logger.error(`Failed to capture PaymentIntent ${paymentIntentId}`, error.message);
       throw error;
     }
   }
-
-  // Product & Pricing Management (Create Product with Price)
-  async createProduct(
-    name: string,
-    description: string,
-    price: number,
-  ): Promise<Stripe.Product> {
-    try {
-      const product = await this.stripe.products.create({ name, description });
-      await this.stripe.prices.create({
-        product: product.id,
-        unit_amount: price * 100, // amount in cents
-        currency: 'usd',
-      });
-      this.logger.log(`Product created successfully: ${name}`);
-      return product;
-    } catch (error) {
-      this.logger.error('Failed to create product', error.stack);
-      throw error;
-    }
-  }
-
-  // Reports and Analytics (Retrieve Balance)
-  async getBalance(): Promise<Stripe.Balance> {
-    try {
-      const balance = await this.stripe.balance.retrieve();
-      this.logger.log('Balance retrieved successfully');
-      return balance;
-    } catch (error) {
-      this.logger.error('Failed to retrieve balance', error.stack);
-      throw error;
-    }
-  }
-
-  // Payment Links
-  async createPaymentLink(priceId: string): Promise<Stripe.PaymentLink> {
-    try {
-      const paymentLink = await this.stripe.paymentLinks.create({
-        line_items: [{ price: priceId, quantity: 1 }],
-      });
-      this.logger.log('Payment link created successfully');
-      return paymentLink;
-    } catch (error) {
-      this.logger.error('Failed to create payment link', error.stack);
-      throw error;
-    }
-  }
+  
 }
