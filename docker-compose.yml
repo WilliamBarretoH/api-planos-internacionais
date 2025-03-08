@@ -16,7 +16,7 @@ services:
 
   app:
     build: .
-    container_name: nest_api
+    container_name: planos_internacionais_api
     depends_on:
       - db
     environment:
